@@ -6,7 +6,7 @@ PriorityExtension.settings = {
   maximum: 4,
 
   h2_css: { "margin-bottom": "10px" },
-  skill_css: { "margin-top": "30px" },
+  skill_css: { "margin-top": "30px", "opacity": "1" },
 
   minLevel: 1,
   maxLevel: 4,
@@ -27,10 +27,10 @@ PriorityExtension.appendSkills = function (box, h2) {
   var ii, skills;
 
   for (ii = PriorityExtension.settings.minLevel; ii <= PriorityExtension.settings.maxLevel; ii += 1) {
-    skills = $("span.strength-" + ii.toString()).parent().parent().slice(0, maximum).css(PriorityExtension.settings.skill_css);
+    skills = $("span.strength-" + ii.toString()).parent().parent().slice(0, maximum).css(PriorityExtension.settings.skill_css).removeClass("fade-this-in");
     maximum -= skills.length;
 
-    box.append(skills);
+    box.append(skills.clone());
 
     if (maximum === 0) break;
   }
@@ -62,11 +62,18 @@ $(document).ready(function () {
   PriorityExtension.create();
 
   // Backbone.js
-  // I'm not an expert on Backbone but this is the best I could do
-  // call .create() when the user changes their language or when the
-  // user navigates back to "home" from somewhere else on the site
-  duo.user.on("change:learning_language", PriorityExtension.create); // TODO ordering problem, maybe remove and re-add on userRouter?
+  // I'm not an expert on Backbone but this is the best I could do:
+  //   - call .create() when the user changes their language
+  //   - call .create() when the user navigates back to "home"
+  //   - remove and add language change listener when user navigates back to "home"
+  duo.user.on("change:learning_language", PriorityExtension.create);
+
   duo.userRouter.on("route", function(route, params) {
-    if (route === "home") PriorityExtension.create();
+    if (route === "home") {
+      PriorityExtension.create();
+
+      duo.user.off("change:learning_language", PriorityExtension.create);
+      duo.user.on("change:learning_language", PriorityExtension.create);
+    }
   });
 });
