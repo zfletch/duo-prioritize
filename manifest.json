@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "Duo Prioritize",
+  "description": "Shows which units need to be strengthened.",
+  "version": "0.1",
+
+  "permissions": [
+    "activeTab"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["https://www.duolingo.com/*"],
+      "js": ["duo-prioritize.js"],
+      "run_at": "document_end"
+    }
+  ]
+}

@@ -1,3 +1,7 @@
+// the whole thing needs to be injected on the page as a string
+// otherwise it executes in an isolated context and can't access variables likes `duo`
+wrapper_string = function () {
+
 var PriorityExtension;
 PriorityExtension = PriorityExtension || {};
 
@@ -62,7 +66,7 @@ $(document).ready(function () {
   PriorityExtension.create();
 
   // Backbone.js
-  // I'm not an expert on Backbone but this is the best I could do:
+  // I'm not an expert on Backbone but this seems to always show the box:
   //   - call .create() when the user changes their language
   //   - call .create() when the user navigates back to "home"
   //   - remove and add language change listener when user navigates back to "home"
@@ -77,3 +81,15 @@ $(document).ready(function () {
     }
   });
 });
+
+return PriorityExtension;
+
+}.toString();
+
+(function () {
+  var script_tag = document.createElement("script");
+  var text = document.createTextNode("var PriorityExtension = (" + wrapper_string + ")();");
+
+  script_tag.appendChild(text);
+  document.body.appendChild(script_tag);
+})();
