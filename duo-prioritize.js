@@ -10,39 +10,58 @@ PriorityExtension.settings = {
   maximum: 4,
 
   h2_css: { "margin-bottom": "10px" },
-  skill_css: { "margin-top": "30px", "opacity": "1" },
+  needs_strengthening_skill_css: { "margin-top": "30px", "opacity": "1" },
+  new_skill_css: { "margin-top": "10px", "opacity": "1" },
 
   minLevel: 1,
-  maxLevel: 4,
+  maxLevel: 4
 };
 
 PriorityExtension.text = {
   loading: { en: "Loading..." },
   all_good: { en: "All skills are strengthened!" },
-  list_skills: { en: "Skills that need strengthening" }
+  list_skills: { en: "Skills that need strengthening" },
+  no_new_skills: { en: "No new skills" },
+  new_skills: { en: "New skills" }
 };
 
 PriorityExtension.translate = function (key) {
   return PriorityExtension.text[key][PriorityExtension.settings.locale];
 };
 
-PriorityExtension.appendSkills = function (box, h2) {
+PriorityExtension.appendSkillsThatNeedStrengthening = function (args) {
   var maximum = PriorityExtension.settings.maximum;
   var ii, skills;
 
   for (ii = PriorityExtension.settings.minLevel; ii <= PriorityExtension.settings.maxLevel; ii += 1) {
-    skills = $("span.strength-" + ii.toString()).parent().parent().slice(0, maximum).css(PriorityExtension.settings.skill_css).removeClass("fade-this-in");
+    skills = $("span.strength-" + ii.toString()).parent().parent().slice(0, maximum).clone();
+    skills.css(PriorityExtension.settings.needs_strengthening_skill_css).removeClass("fade-this-in");
     maximum -= skills.length;
 
-    box.append(skills.clone());
+    args.box.append(skills.clone());
 
     if (maximum === 0) break;
   }
 
   if (maximum === PriorityExtension.settings.maximum) {
-    h2.text(PriorityExtension.translate("all_good"));
+    args.h2.text(PriorityExtension.translate("all_good"));
   } else {
-    h2.text(PriorityExtension.translate("list_skills"));
+    args.h2.text(PriorityExtension.translate("list_skills"));
+  }
+};
+
+PriorityExtension.appendNewSkills = function (args) {
+  var maximum = PriorityExtension.settings.maximum;
+  var skills;
+
+  skills = $(".unlocked").parent().filter(function () { return $(this).find(".lessons-left:not(:empty)").length; }).clone();
+  skills.css(PriorityExtension.settings.new_skill_css).removeClass("fade-this-in");
+  args.box.append(skills.clone());
+
+  if (skills.length === 0) {
+    args.h2.text(PriorityExtension.translate("no_new_skills"));
+  } else {
+    args.h2.text(PriorityExtension.translate("new_skills"));
   }
 };
 
@@ -52,13 +71,18 @@ PriorityExtension.valid = function () {
 
 
 PriorityExtension.create = function () {
-  if (PriorityExtension.valid()) {
-    var h2 = $("<h2>", { text: PriorityExtension.translate("loading"), id: "priority-extension-title" }).css(PriorityExtension.settings.h2_css);
-    var box = $("<div>", { id: "priority-extension-box", class: "box-colored bg-white" }).append(h2);
+  var createBox = function (prefix) {
+    var h2 = $("<h2>", { text: PriorityExtension.translate("loading"), id: prefix + "-title" }).css(PriorityExtension.settings.h2_css);
+    var box = $("<div>", { id: prefix + "-box", class: "box-colored bg-white" }).append(h2);
     $("#priority-extension-box").remove();
     $(".page-sidebar").prepend(box);
 
-    PriorityExtension.appendSkills(box, h2);
+    return { box: box, h2: h2 };
+  };
+
+  if (PriorityExtension.valid()) {
+    PriorityExtension.appendNewSkills(createBox("priority-extension-new"));
+    PriorityExtension.appendSkillsThatNeedStrengthening(createBox("priority-extension-needs-strengthening"));
   }
 };
 
