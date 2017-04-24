@@ -16,6 +16,7 @@ This way, you don't need to scroll through the entire tree to find the skills th
 
 * Run `build.sh`
 * Go to `chrome://extensions/` in Chrome
+* Make sure `Developer mode` is checked
 * Click `Load unpacked extension`
 * Load the directory `duo-prioritize/temp-dir`.
 

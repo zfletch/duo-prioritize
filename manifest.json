@@ -3,7 +3,7 @@
 
   "name": "Duo Prioritize",
   "description": "Shows which units need to be strengthened.",
-  "version": "0.0.1",
+  "version": "0.1.0",
 
   "permissions": [
     "activeTab"
