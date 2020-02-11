@@ -1,5 +1,7 @@
 # Duo Prioritize
 
+## Duolingo has changed their review system. This repository is now archived.
+
 This is a Chrome extension for the website [duolingo.com](https://duolingo.com).
 It shows skills that need strengthening in the upper right corner of the screen.
 This way, you don't need to scroll through the entire tree to find the skills that you need to practice.
